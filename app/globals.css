@@ -1,23 +1,64 @@
 @import "tailwindcss";
+
+/* ─── FONTS (self-hosted from /public) ─── */
+@font-face {
+  font-family: 'Cooper Hewitt';
+  src: url('/Cooper-Hewitt/CooperHewitt-Book.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cooper Hewitt';
+  src: url('/Cooper-Hewitt/CooperHewitt-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cooper Hewitt';
+  src: url('/Cooper-Hewitt/CooperHewitt-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cooper Hewitt';
+  src: url('/Cooper-Hewitt/CooperHewitt-Heavy.otf') format('opentype');
+  font-weight: 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('/Roboto/Roboto-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* ─── PALETTE (coolors.co/004aad-0e65b9-1b7fc4-7ed957-3fad47-008037-f7f9f8-1a1d1f) ─── */
 :root {
-  --gold: #F5A623;
-  --gold-light: #FAD07A;
-  --gold-dark: #C07D0D;
-  --black: #0A0A0A;
-  --offwhite: #F5F0E8;
-  --background: #0A0A0A;
-  --foreground: #F5F0E8;
+  --cobalt: #004AAD;
+  --ocean: #0E65B9;
+  --steel: #1B7FC4;
+  --grass: #7ED957;
+  --jungle: #3FAD47;
+  --forest: #008037;
+  --snow: #F7F9F8;
+  --carbon: #1A1D1F;
+  --background: var(--snow);
+  --foreground: var(--carbon);
 }
 
 @theme inline {
+  --color-cobalt: var(--cobalt);
+  --color-ocean: var(--ocean);
+  --color-steel: var(--steel);
+  --color-grass: var(--grass);
+  --color-jungle: var(--jungle);
+  --color-forest: var(--forest);
+  --color-snow: var(--snow);
+  --color-carbon: var(--carbon);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: 'DM Sans', sans-serif;
-  --font-display: 'Bebas Neue', sans-serif;
-}
-
-* {
-  box-sizing: border-box;
+  --font-sans: 'Roboto', system-ui, sans-serif;
+  --font-display: 'Cooper Hewitt', 'Roboto', system-ui, sans-serif;
 }
 
 html {
@@ -25,37 +66,29 @@ html {
 }
 
 body {
-  background: var(--black);
-  color: var(--offwhite);
-  font-family: 'DM Sans', sans-serif;
+  background: var(--snow);
+  color: var(--carbon);
+  font-family: var(--font-sans);
   overflow-x: hidden;
 }
 
-/* ─── SUNBURST ANIMATION ─── */
+::selection {
+  background: var(--grass);
+  color: var(--carbon);
+}
+
+/* ─── KEYFRAMES ─── */
 @keyframes spin-slow {
   to { transform: rotate(360deg); }
 }
 
-@keyframes scrolldown {
-  0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
-  50%  { opacity: 1; }
-  100% { opacity: 0; transform: scaleY(1); transform-origin: top; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-12px); }
 }
 
 @keyframes marquee {
   to { transform: translateX(-50%); }
-}
-
-@keyframes aurora-flow {
-  0%   { transform: translateX(-10px) translateY(-5px); opacity: 0.3; }
-  50%  { transform: translateX(10px) translateY(5px);  opacity: 0.5; }
-  100% { transform: translateX(-10px) translateY(-5px); opacity: 0.3; }
-}
-
-@keyframes gradient-x {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
 }
 
 @keyframes fadeInUp {
@@ -63,194 +96,109 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── UTILITY ANIMATIONS ─── */
-.animate-spin-slow {
-  animation: spin-slow 80s linear infinite;
-}
+.animate-spin-slow { animation: spin-slow 60s linear infinite; }
+.animate-spin-slower { animation: spin-slow 90s linear infinite reverse; }
+.animate-float { animation: float 6s ease-in-out infinite; }
 
 .animate-marquee {
-  animation: marquee 20s linear infinite;
+  animation: marquee 30s linear infinite;
   display: flex;
   width: max-content;
 }
 
-.animate-scroll-line {
-  animation: scrolldown 2s ease-in-out infinite;
+.fade-up   { animation: fadeInUp 0.8s ease both; }
+.fade-up-1 { animation: fadeInUp 0.8s ease 0.12s both; }
+.fade-up-2 { animation: fadeInUp 0.8s ease 0.24s both; }
+.fade-up-3 { animation: fadeInUp 0.8s ease 0.36s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-spin-slow, .animate-spin-slower, .animate-float, .animate-marquee,
+  .fade-up, .fade-up-1, .fade-up-2, .fade-up-3 {
+    animation: none;
+  }
 }
 
-.animate-gradient-x {
-  animation: gradient-x 6s ease-in-out infinite;
-  background: linear-gradient(45deg, #F5A623 0%, #FAD07A 25%, #C07D0D 50%, #F5A623 75%, #FAD07A 100%);
-  background-size: 300% 300%;
+/* ─── HERO BACKDROP ─── */
+.hero-bg {
+  background:
+    radial-gradient(60% 60% at 85% 20%, rgba(126, 217, 87, 0.28) 0%, rgba(126, 217, 87, 0) 70%),
+    radial-gradient(55% 55% at 10% 90%, rgba(27, 127, 196, 0.18) 0%, rgba(27, 127, 196, 0) 70%),
+    var(--snow);
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease forwards;
+.dot-grid {
+  background-image: radial-gradient(rgba(26, 29, 31, 0.12) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(to bottom, black 0%, transparent 85%);
 }
 
-.animate-fade-in-up-delay-1 { animation: fadeInUp 0.8s ease 0.15s both; }
-.animate-fade-in-up-delay-2 { animation: fadeInUp 0.8s ease 0.3s both; }
-.animate-fade-in-up-delay-3 { animation: fadeInUp 0.8s ease 0.45s both; }
-
-/* ─── FONT HELPERS ─── */
-.font-display {
-  font-family: 'Bebas Neue', sans-serif;
+.text-gradient {
+  background: linear-gradient(100deg, var(--cobalt) 0%, var(--steel) 45%, var(--jungle) 75%, var(--forest) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-/* ─── NAVBAR ─── */
-.navbar {
-  background: #fff;
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(245, 166, 35, 0.15);
-  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.4);
+@layer components {
+/* ─── BUTTONS ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  padding: 0.9rem 1.6rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+  cursor: pointer;
 }
+.btn:hover { transform: translateY(-2px); }
+.btn:focus-visible { outline: 3px solid var(--grass); outline-offset: 3px; }
 
-/* ─── HERO RADIAL VIGNETTE ─── */
-.hero-vignette {
-  background: radial-gradient(
-    ellipse 70% 70% at 50% 50%,
-    rgba(10, 10, 10, 0) 0%,
-    rgba(10, 10, 10, 0.65) 55%,
-    rgba(10, 10, 10, 0.98) 100%
-  );
-}
+.btn-primary { background: var(--cobalt); color: var(--snow); }
+.btn-primary:hover { background: var(--ocean); }
 
-/* ─── SERVICES GRID ─── */
+.btn-grass { background: var(--grass); color: var(--carbon); }
+.btn-grass:hover { background: #95e274; }
+
+.btn-outline { border: 1.5px solid rgba(26, 29, 31, 0.2); color: var(--carbon); }
+.btn-outline:hover { border-color: var(--cobalt); color: var(--cobalt); }
+
+/* ─── CARDS ─── */
 .service-card {
-  background: var(--black);
-  border-top: 2px solid transparent;
-  transition: background 0.3s, border-color 0.3s;
-  position: relative;
-  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
-
-.service-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
-}
-
 .service-card:hover {
-  background: rgba(245, 166, 35, 0.04);
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px -24px rgba(0, 74, 173, 0.35);
+  border-color: rgba(0, 74, 173, 0.25);
 }
 
-.service-card:hover::before {
-  transform: scaleX(1);
+.work-card .work-art {
+  transition: transform 0.6s ease;
 }
-
-/* ─── ABOUT STRIP ─── */
-.about-strip {
-  background: var(--gold);
-}
-
-/* ─── PARTNER CARDS ─── */
-.partner-card-overlay {
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.partner-card:hover .partner-card-overlay {
-  opacity: 1;
+.work-card:hover .work-art {
+  transform: scale(1.06);
 }
 
 /* ─── FORM FIELDS ─── */
-.field-underline {
+.field {
   width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(245, 166, 35, 0.25);
-  padding: 0.85rem 0;
-  color: var(--offwhite);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
+  background: rgba(247, 249, 248, 0.06);
+  border: 1px solid rgba(247, 249, 248, 0.16);
+  border-radius: 14px;
+  padding: 0.95rem 1.1rem;
+  color: var(--snow);
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s;
-  display: block;
+  transition: border-color 0.2s, background 0.2s;
 }
-
-.field-underline::placeholder {
-  color: rgba(245, 240, 232, 0.28);
+.field::placeholder { color: rgba(247, 249, 248, 0.45); }
+.field:focus {
+  border-color: var(--grass);
+  background: rgba(247, 249, 248, 0.09);
 }
-
-.field-underline:focus {
-  border-color: var(--gold);
-}
-
-/* ─── BUTTONS ─── */
-.btn-gold {
-  background: var(--gold);
-  color: var(--black);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 500;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border: none;
-  padding: 0.85rem 2.25rem;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-  box-shadow: none;
-}
-
-.btn-gold:hover {
-  background: var(--gold-light);
-  transform: translateY(-1px);
-  box-shadow: none;
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--offwhite);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border: 1px solid rgba(245, 240, 232, 0.28);
-  padding: 0.85rem 2.25rem;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s, transform 0.15s;
-  box-shadow: none;
-}
-
-.btn-ghost:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  transform: translateY(-1px);
-  box-shadow: none;
-}
-
-.btn-ghost-dark {
-  background: transparent;
-  color: var(--black);
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 400;
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border: 1px solid rgba(10, 10, 10, 0.35);
-  padding: 0.85rem 2.25rem;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-  box-shadow: none;
-}
-
-.btn-ghost-dark:hover {
-  background: rgba(10, 10, 10, 0.1);
-  transform: translateY(-1px);
-  box-shadow: none;
-}
-
-/* ─── GLOBAL BUTTON RESET (override Tailwind's default shadow) ─── */
-button {
-  box-shadow: none;
-}
-
-button:hover {
-  box-shadow: none;
+.field option { color: var(--carbon); }
 }
