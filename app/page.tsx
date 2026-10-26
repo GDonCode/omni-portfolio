@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -99,6 +99,24 @@ function Eyebrow({ children, dark = false }: { children: React.ReactNode; dark?:
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+
+  // Highlight the nav link for whichever section is in the middle of the viewport
+  useEffect(() => {
+    const sections = NAV.map((item) => document.getElementById(item.toLowerCase())).filter(
+      (el): el is HTMLElement => el !== null,
+    );
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        }
+      },
+      { rootMargin: '-50% 0px -50% 0px' },
+    );
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -112,29 +130,44 @@ export default function Home() {
     <div className="overflow-x-hidden">
 
       {/* ─── NAVBAR ─── */}
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-carbon/5 bg-snow/80 backdrop-blur-lg">
-        <div className="mx-auto flex h-20 max-w-[1240px] items-center justify-between px-5 md:px-10">
+      <header className="fixed inset-x-0 top-0 z-50 bg-ocean shadow-[0_8px_30px_-12px_rgba(0,74,173,0.6)]">
+        <div className="mx-auto flex h-24 max-w-[1240px] items-center justify-between gap-6 px-5 md:px-10">
           <Link href="#top" className="flex items-center gap-3" onClick={() => setMenuOpen(false)}>
-            <Image src="/omniray-emblem.webp" alt="" width={44} height={44} priority />
-            <span className="font-display text-xl font-bold tracking-tight">
-              Omni<span className="text-cobalt">Ray</span>
+            <Image
+              src="/omniray-emblem.webp"
+              alt=""
+              width={72}
+              height={72}
+              priority
+              className="drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)]"
+            />
+            <span className="font-display text-2xl font-extrabold tracking-tight text-snow">
+              OmniRay
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-9 md:flex">
-            {NAV.map((item) => (
-              <Link
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="text-sm font-medium text-carbon/70 transition-colors hover:text-cobalt"
-              >
-                {item}
-              </Link>
-            ))}
+          {/* Signature square link container */}
+          <nav className="hidden items-center gap-1 border border-snow/25 bg-snow/10 p-1.5 md:flex">
+            {NAV.map((item) => {
+              const id = item.toLowerCase();
+              const active = activeSection === id;
+              return (
+                <Link
+                  key={item}
+                  href={`#${id}`}
+                  aria-current={active ? 'true' : undefined}
+                  className={`px-5 py-2.5 text-sm font-bold uppercase tracking-[0.12em] transition-colors ${
+                    active ? 'bg-snow text-ocean' : 'text-snow hover:bg-snow/15'
+                  }`}
+                >
+                  {item}
+                </Link>
+              );
+            })}
           </nav>
 
-          <a href="#contact" className="btn btn-primary hidden md:inline-flex">
-            Get a Quote
+          <a href="#contact" className="btn-square hidden md:inline-flex">
+            Get a Quote <span aria-hidden>→</span>
           </a>
 
           <button
@@ -142,28 +175,35 @@ export default function Home() {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((o) => !o)}
-            className="flex h-11 w-11 flex-col items-center justify-center gap-1.5 rounded-full border border-carbon/10 md:hidden"
+            className="flex h-12 w-12 flex-col items-center justify-center gap-1.5 border border-snow/25 bg-snow/10 md:hidden"
           >
-            <span className={`block h-0.5 w-5 bg-carbon transition-transform ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
-            <span className={`block h-0.5 w-5 bg-carbon transition-opacity ${menuOpen ? 'opacity-0' : ''}`} />
-            <span className={`block h-0.5 w-5 bg-carbon transition-transform ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+            <span className={`block h-0.5 w-5 bg-snow transition-transform ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+            <span className={`block h-0.5 w-5 bg-snow transition-opacity ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block h-0.5 w-5 bg-snow transition-transform ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
           </button>
         </div>
 
         {menuOpen && (
-          <nav className="flex flex-col gap-1 border-t border-carbon/5 bg-snow px-5 pb-6 pt-3 md:hidden">
-            {NAV.map((item) => (
-              <Link
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                onClick={() => setMenuOpen(false)}
-                className="rounded-xl px-3 py-3 font-display text-lg font-semibold hover:bg-cobalt/5 hover:text-cobalt"
-              >
-                {item}
-              </Link>
-            ))}
-            <a href="#contact" onClick={() => setMenuOpen(false)} className="btn btn-primary mt-3 justify-center">
-              Get a Quote
+          <nav className="border-t border-snow/15 bg-ocean px-5 pb-6 pt-4 md:hidden">
+            <div className="flex flex-col gap-1 border border-snow/25 bg-snow/10 p-1.5">
+              {NAV.map((item) => {
+                const id = item.toLowerCase();
+                return (
+                  <Link
+                    key={item}
+                    href={`#${id}`}
+                    onClick={() => setMenuOpen(false)}
+                    className={`px-4 py-3 text-sm font-bold uppercase tracking-[0.12em] ${
+                      activeSection === id ? 'bg-snow text-ocean' : 'text-snow hover:bg-snow/15'
+                    }`}
+                  >
+                    {item}
+                  </Link>
+                );
+              })}
+            </div>
+            <a href="#contact" onClick={() => setMenuOpen(false)} className="btn-square mt-3 flex justify-center">
+              Get a Quote <span aria-hidden>→</span>
             </a>
           </nav>
         )}
@@ -258,7 +298,7 @@ export default function Home() {
         </div>
 
         {/* ─── SERVICES ─── */}
-        <section id="services" className="mx-auto max-w-[1240px] scroll-mt-20 px-5 py-24 md:px-10 md:py-32">
+        <section id="services" className="mx-auto max-w-[1240px] scroll-mt-24 px-5 py-24 md:px-10 md:py-32">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <Eyebrow>What We Do</Eyebrow>
@@ -292,7 +332,7 @@ export default function Home() {
         </section>
 
         {/* ─── ABOUT + PROCESS ─── */}
-        <section id="process" className="scroll-mt-20 px-3 md:px-6">
+        <section id="process" className="scroll-mt-24 px-3 md:px-6">
           <div className="relative overflow-hidden rounded-[2rem] bg-cobalt px-5 py-20 text-snow md:rounded-[2.5rem] md:px-10 md:py-28">
             <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-steel/50 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-jungle/40 blur-3xl" />
@@ -330,7 +370,7 @@ export default function Home() {
         </section>
 
         {/* ─── WORK ─── */}
-        <section id="work" className="mx-auto max-w-[1240px] scroll-mt-20 px-5 py-24 md:px-10 md:py-32">
+        <section id="work" className="mx-auto max-w-[1240px] scroll-mt-24 px-5 py-24 md:px-10 md:py-32">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <Eyebrow>Our Work</Eyebrow>
@@ -382,7 +422,7 @@ export default function Home() {
         </section>
 
         {/* ─── CONTACT ─── */}
-        <section id="contact" className="scroll-mt-20 px-3 pb-3 md:px-6 md:pb-6">
+        <section id="contact" className="scroll-mt-24 px-3 pb-3 md:px-6 md:pb-6">
           <div className="relative overflow-hidden rounded-[2rem] bg-carbon px-5 py-20 text-snow md:rounded-[2.5rem] md:px-10 md:py-28">
             <div className="pointer-events-none absolute -right-24 top-10 h-80 w-80 rounded-full bg-forest/50 blur-3xl" />
             <div className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-ocean/40 blur-3xl" />
