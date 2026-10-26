@@ -163,6 +163,22 @@ body {
 .btn-grass { background: var(--grass); color: var(--carbon); }
 .btn-grass:hover { background: #95e274; }
 
+.btn-square {
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--grass);
+  color: var(--carbon);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-square:hover { background: #95e274; transform: translateY(-2px); }
+.btn-square:focus-visible { outline: 3px solid var(--snow); outline-offset: 3px; }
+
 .btn-outline { border: 1.5px solid rgba(26, 29, 31, 0.2); color: var(--carbon); }
 .btn-outline:hover { border-color: var(--cobalt); color: var(--cobalt); }
 
